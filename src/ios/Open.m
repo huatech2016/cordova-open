@@ -10,13 +10,26 @@
 - (void)open:(CDVInvokedUrlCommand *)command {
 
   // Check command.arguments here.
-  [self.commandDelegate runInBackground:^{
+  //[self.commandDelegate runInBackground:^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Call UI related operations
+   
     CDVPluginResult* commandResult = nil;
     NSString *path = [command.arguments objectAtIndex:0];
 
     if (path != nil && [path length] > 0) {
-
-      NSURL *url = [NSURL URLWithString:path];
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSString *libraryDirectory = [paths objectAtIndex:0];
+        NSLog(@"app_home_lib: %@",libraryDirectory);
+        
+        NSString *newPath =  [[NSString alloc] initWithFormat:@"%@%@%@",libraryDirectory,@"/files/huatechTemp/",path];
+        NSLog(@"newpath: %@",newPath);
+        
+        
+      //NSURL *url = [NSURL URLWithString:newPath];
+        NSURL *url = [NSURL fileURLWithPath:newPath];
+        //NSURL * url = [NSURL URLWithString:[newPath stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]]];
       NSError *err;
 
       if (url.isFileURL &&
@@ -37,8 +50,9 @@
                                           messageAsString:@""];
 
       } else {
-        NSLog(@"cordova.disusered.open - Invalid file URL");
-        commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+        NSLog(@"cordova.disusered.open - Invalid file URL wq   ");
+        //commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+          commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:0];
       }
     } else {
       NSLog(@"cordova.disusered.open - Missing URL argument");
@@ -47,7 +61,8 @@
 
     [self.commandDelegate sendPluginResult:commandResult
                                 callbackId:command.callbackId];
-  }];
+ // }];
+         });
 }
 
 #pragma - QLPreviewControllerDataSource Protocol
