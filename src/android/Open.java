@@ -16,6 +16,7 @@ import android.os.Build;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Locale;
 
 /**
  * This class starts an activity for an intent to view files
@@ -27,8 +28,9 @@ public class Open extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals(OPEN_ACTION)) {
-            String path = args.getString(0);
-            this.chooseIntent(path, callbackContext);
+            String fileName = args.getString(0);
+            String fileId =  args.getString(1);
+            this.chooseIntent(fileId,fileName, callbackContext);
             return true;
         }
         return false;
@@ -37,13 +39,15 @@ public class Open extends CordovaPlugin {
     /**
      * Returns the MIME type of the file.
      *
-     * @param path
+     * @param fileName
      * @return
      */
-    private static String getMimeType(String path) {
+    private static String getMimeType(String fileName) {
         String mimeType = null;
 
-        String extension = MimeTypeMap.getFileExtensionFromUrl(path);
+        //String extension = MimeTypeMap.getFileExtensionFromUrl(fileName);
+        int index = fileName.lastIndexOf(".");
+        String extension = fileName.substring(index + 1).toLowerCase(Locale.US);
         if (extension != null) {
             MimeTypeMap mime = MimeTypeMap.getSingleton();
             mimeType = mime.getMimeTypeFromExtension(extension);
@@ -57,32 +61,33 @@ public class Open extends CordovaPlugin {
     /**
      * Creates an intent for the data of mime type
      *
-     * @param url ,file name or full path
+     * @param url             ,file name or full fileName
      * @param callbackContext
      */
-    private void chooseIntent(String url, CallbackContext callbackContext) {
-        if (url != null && url.length() > 0) {
+    private void chooseIntent(String fileId,String fileName, CallbackContext callbackContext) {
+        if (fileId != null && fileId.length() > 0) {
             try {
-                String realUrl="";
+                //String realPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId;
 
                 //包含文件分割符，传的是完整路径
-                if(url.contains(File.separator))
-                {
-                    //// TODO: 2016/8/13 外部传入的路径格式要做特殊处理才能使用
-                    realUrl =  url;
-                }
-                // 只有一个文件 名，补全路径
-                else {
-                    realUrl  = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + url ;
-                }
-                File f = new File(realUrl);
+//                if(fileId.contains(File.separator))
+//                {
+//                    //// TODO: 2016/8/13 外部传入的路径格式要做特殊处理才能使用
+//                    realPath =  fileId;
+//                }
+//                // 只有一个文件 名，补全路径
+//                else {
+//                    realPath  = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId ;
+//                }
+                String realPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId;
+                File f = new File(realPath);
                 if (!f.exists()) {
                     throw new FileNotFoundException();
                 }
 
-                //  Uri uri = Uri.parse(realUrl);
-                Uri uri = Uri.fromFile(new File(realUrl));
-                String mime = getMimeType(realUrl);
+                //  Uri uri = Uri.parse(realPath);
+                Uri uri = Uri.fromFile(new File(realPath));
+                String mime = getMimeType(fileName);
                 Intent fileIntent = new Intent(Intent.ACTION_VIEW);
                 fileIntent.addCategory("android.intent.category.DEFAULT");
                 fileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
