@@ -6,6 +6,7 @@ import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.content.Context;
 import android.net.Uri;
 import android.content.Intent;
 import android.os.Environment;
@@ -29,7 +30,8 @@ public class Open extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals(OPEN_ACTION)) {
             String fileName = args.getString(0);
-            String fileId =  args.getString(1);
+            String fileId = args.getString(1);
+
             this.chooseIntent(fileId,fileName, callbackContext);
             return true;
         }
@@ -79,7 +81,12 @@ public class Open extends CordovaPlugin {
 //                else {
 //                    realPath  = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId ;
 //                }
-                String realPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId;
+                //String realPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId;
+
+
+                String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+                String realPath = cordova.getActivity().getExternalFilesDir("")  + File.separator + fileId +"."+ suffix;
+
                 File f = new File(realPath);
                 if (!f.exists()) {
                     throw new FileNotFoundException();
