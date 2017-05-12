@@ -14,7 +14,8 @@
             <feature name="Open">
                 <param name="android-package" value="com.disusered.Open"/>
             </feature>
-
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver android:name="com.disusered.MyBroadCastReciver">
                 <intent-filter>
                     <action android:name="com.kingsoft.writer.back.key.down"/>
@@ -24,6 +25,7 @@
                 </intent-filter>
             </receiver>
         </config-file>
+
         <config-file parent="/*" target="AndroidManifest.xml"/>
         <source-file src="src/android/Open.java" target-dir="src/com/disusered"/>
         <source-file src="src/android/WpsModel.java" target-dir="src/com/disusered"/>
