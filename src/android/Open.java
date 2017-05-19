@@ -33,8 +33,7 @@ public class Open extends CordovaPlugin {
         if (action.equals(OPEN_ACTION)) {
             String fileName = args.getString(0);
             String fileId = args.getString(1);
-
-            this.chooseIntent(fileId,fileName);
+            this.tryToOpenFile(fileId,fileName);
             return true;
         }
         return false;
@@ -66,7 +65,7 @@ public class Open extends CordovaPlugin {
      * Creates an intent for the data of mime type
      *
      */
-    private void chooseIntent(String fileId,String fileName) {
+    private void tryToOpenFile(String fileId,String fileName) {
        /* if (fileId != null && fileId.length() > 0) {
             try {
 
@@ -100,10 +99,39 @@ public class Open extends CordovaPlugin {
         }*/
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
         String realPath = cordova.getActivity().getExternalFilesDir("")  + File.separator + fileId +"."+ suffix;
-        openFile(realPath);
+        if(isWpsFile(realPath))
+        {
+            openWpsFile(realPath);
+        }
+        else {
+            openNotWpsFile(fileId,fileName);
+        }
+
 
     }
-    boolean openFile(String path) {
+    private boolean isWpsFile(String path)
+    {
+        if(path !=null)
+        {
+            boolean isDoc = path.endsWith("doc") ||path.endsWith("docx");
+            boolean isExcel = path.endsWith("xls") ||path.endsWith("xlsx");
+            boolean isPpt =  path.endsWith("ppt") ||path.endsWith("pptx");
+            if(isDoc||isExcel||isPpt)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else {
+            callbackContext.error("文件路径有误");
+            return false;
+        }
+
+    }
+    boolean openWpsFile(String path) {
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putString(WpsModel.OPEN_MODE, OpenMode.NORMAL); // 打开模式
@@ -117,7 +145,7 @@ public class Open extends CordovaPlugin {
 
         File file = new File(path);
         if (file == null || !file.exists()) {
-            callbackContext.error(0);
+            callbackContext.error("文件不存在");
             return false;
         }
 
@@ -127,12 +155,46 @@ public class Open extends CordovaPlugin {
         try {
             cordova.getActivity().startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            callbackContext.error(1);
+            callbackContext.error("打开文件失败，请先安装wps office");
             e.printStackTrace();
             return false;
         }
         return true;
     }
+
+    private void openNotWpsFile(String fileId,String fileName) {
+        if (fileId != null && fileId.length() > 0) {
+            try {
+                String realPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId;
+                File f = new File(realPath);
+                if (!f.exists()) {
+                    throw new FileNotFoundException();
+                }
+
+                //  Uri uri = Uri.parse(realPath);
+                Uri uri = Uri.fromFile(new File(realPath));
+                String mime = getMimeType(fileName);
+                Intent fileIntent = new Intent(Intent.ACTION_VIEW);
+                fileIntent.addCategory("android.intent.category.DEFAULT");
+                fileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (Build.VERSION.SDK_INT > 15) {
+                    fileIntent.setDataAndTypeAndNormalize(uri, mime); // API Level 16 -> Android 4.1
+                } else {
+                    fileIntent.setDataAndType(uri, mime);
+                }
+                cordova.getActivity().startActivity(fileIntent);
+                callbackContext.success();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                callbackContext.error("文件不存在");
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+                callbackContext.error("无法打开文件");
+            }
+        }
+    }
+}
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
