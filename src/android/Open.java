@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.webkit.MimeTypeMap;
 
 import com.disusered.WpsModel.ClassName;
@@ -76,10 +75,13 @@ public class Open extends CordovaPlugin {
 
     private boolean isWpsFile(String path) {
         if (path != null) {
+            path = path.toLowerCase();
             boolean isDoc = path.endsWith("doc") || path.endsWith("docx");
             boolean isExcel = path.endsWith("xls") || path.endsWith("xlsx");
             boolean isPpt = path.endsWith("ppt") || path.endsWith("pptx");
-            if (isDoc || isExcel || isPpt) {
+            boolean isPdf = path.endsWith("pdf") ;
+
+            if (isDoc || isExcel || isPpt||isPdf) {
                 return true;
             } else {
                 return false;
@@ -125,7 +127,9 @@ public class Open extends CordovaPlugin {
     private void openNotWpsFile(String fileId, String fileName) {
         if (fileId != null && fileId.length() > 0) {
             try {
-                String realPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId;
+                String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+                String realPath = cordova.getActivity().getExternalFilesDir("") + File.separator + fileId + "." + suffix;
+               // String realPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId;
                 File f = new File(realPath);
                 if (!f.exists()) {
                     throw new FileNotFoundException();
@@ -149,18 +153,18 @@ public class Open extends CordovaPlugin {
                 callbackContext.error("文件不存在");
             } catch (ActivityNotFoundException e) {
                 e.printStackTrace();
-                callbackContext.error("无法打开文件");
+                callbackContext.error("程序未检测到可以打开此文件的应用");
             }
         }
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == OPEN_FILE_REQUEST) {
-
-            callbackContext.success();
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//
+//        if (requestCode == OPEN_FILE_REQUEST) {
+//
+//            callbackContext.success();
+//        }
+//    }
 }
