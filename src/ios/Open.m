@@ -15,17 +15,21 @@
         // Call UI related operations
    
     CDVPluginResult* commandResult = nil;
-    NSString *path = [command.arguments objectAtIndex:0];
+    NSString *fileName = [command.arguments objectAtIndex:0];
 
-    if (path != nil && [path length] > 0) {
+    if (fileName != nil && [fileName length] > 0) {
         
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-        NSString *libraryDirectory = [paths objectAtIndex:0];
-        NSLog(@"app_home_lib: %@",libraryDirectory);
-        
-        NSString *newPath =  [[NSString alloc] initWithFormat:@"%@%@%@",libraryDirectory,@"/files/huatechTemp/",path];
-        NSLog(@"newpath: %@",newPath);
-        
+//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+//        NSString *libraryDirectory = [paths objectAtIndex:0];
+//        NSLog(@"app_home_lib: %@",libraryDirectory);
+
+        //NSString *newPath =  [[NSString alloc] initWithFormat:@"%@%@%@",libraryDirectory,@"/files/huatechTemp/",path];
+
+
+         NSString *filePath=[NSHomeDirectory() stringByAppendingPathComponent:@"tmp/files/"];
+
+     NSString *newPath =  [[NSString alloc] initWithFormat:@"%@%@",filePath,fileName];
+     NSLog(@"newpath: %@",newPath);
         
       //NSURL *url = [NSURL URLWithString:newPath];
         NSURL *url = [NSURL fileURLWithPath:newPath];
@@ -84,3 +88,4 @@
 }
 
 @end
+
