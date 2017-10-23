@@ -14,16 +14,26 @@
         // Call UI related operations
    
     CDVPluginResult* commandResult = nil;
-    NSString *path = [command.arguments objectAtIndex:0];
 
-    if (path != nil && [path length] > 0) {
+    NSArray  *arguments = command.arguments;
+    NSString *fileId;
+    NSString  *fileName;
+    NSString  *extension;
+    if (!arguments || [arguments count] < 2) {
+        NSLog(@"#### setTagsWithAlias param is less");
+        return ;
+    }else{
+        fileId = arguments[0];
+        fileName  = arguments[1];
+        extension =  [fileName pathExtension];  //aaa.doc -> doc
+    }
+    NSString *storeName =[NSString stringWithFormat:@"%@.%@",fileId,extension];
+    NSLog(@"####  fileId is %@, fileName is %@",fileId,fileName);
+    NSString *tmpDir=[NSHomeDirectory() stringByAppendingPathComponent:@"tmp/files"];
+    NString *fileName = [tmpDir stringByAppendingPathComponent:[NSString stringWithFormat:@"/%@",storeName]];
+    if (fileName != nil && [fileName length] > 0) {
 
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-        NSString *libraryDirectory = [paths objectAtIndex:0];
-        NSLog(@"app_home_lib: %@",libraryDirectory);
-        NSString *newPath =  [[NSString alloc] initWithFormat:@"%@%@%@",libraryDirectory,@"/files/huatechTemp/",path];
-     NSLog(@"newpath: %@",newPath);
-     NSURL *url = [NSURL fileURLWithPath:newPath];
+     NSURL *url = [NSURL fileURLWithPath:fileName];
      NSError *err;
 
       if (url.isFileURL &&
@@ -70,17 +80,9 @@
         extension =  [fileName pathExtension];  //aaa.doc -> doc
     }
      NSString *storeName =[NSString stringWithFormat:@"%@.%@",fileId,extension];
-    //NSLog(@"####  fileId is %@, fileName is %@",fileId,fileName);
-    //NSString *tmpDir=[NSHomeDirectory() stringByAppendingPathComponent:@"tmp/files"];
-   // NSString *storFile = [tmpDir stringByAppendingPathComponent:[NSString stringWithFormat:@"/%@",storeName]];
-
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-           NSString *libraryDirectory = [paths objectAtIndex:0];
-           NSLog(@"app_home_lib: %@",libraryDirectory);
-           NSString *newPath =  [[NSString alloc] initWithFormat:@"%@%@%@",libraryDirectory,@"/files/huatechTemp/",storeName];
-        NSLog(@"newpath: %@",newPath);
-        NSURL *storFile = [NSURL fileURLWithPath:newPath];
-
+    NSLog(@"####  fileId is %@, fileName is %@",fileId,fileName);
+    NSString *tmpDir=[NSHomeDirectory() stringByAppendingPathComponent:@"tmp/files"];
+    NSString *storFile = [tmpDir stringByAppendingPathComponent:[NSString stringWithFormat:@"/%@",storeName]];
 
    NSFileManager *fileManager = [NSFileManager defaultManager];
    BOOL result = [fileManager fileExistsAtPath:storFile];
