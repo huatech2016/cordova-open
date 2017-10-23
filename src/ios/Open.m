@@ -23,17 +23,17 @@
         NSLog(@"#### setTagsWithAlias param is less");
         return ;
     }else{
-        fileId = arguments[0];
-        fileName  = arguments[1];
+        fileName  = arguments[0];
+        fileId = arguments[1];
         extension =  [fileName pathExtension];  //aaa.doc -> doc
     }
     NSString *storeName =[NSString stringWithFormat:@"%@.%@",fileId,extension];
     NSLog(@"####  fileId is %@, fileName is %@",fileId,fileName);
     NSString *tmpDir=[NSHomeDirectory() stringByAppendingPathComponent:@"tmp/files"];
-    NString *fileName = [tmpDir stringByAppendingPathComponent:[NSString stringWithFormat:@"/%@",storeName]];
-    if (fileName != nil && [fileName length] > 0) {
+    NSString *newPath = [tmpDir stringByAppendingPathComponent:[NSString stringWithFormat:@"/%@",storeName]];
+    if (newPath != nil && [newPath length] > 0) {
 
-     NSURL *url = [NSURL fileURLWithPath:fileName];
+     NSURL *url = [NSURL fileURLWithPath:newPath];
      NSError *err;
 
       if (url.isFileURL &&
@@ -44,9 +44,9 @@
         QLPreviewController *previewCtrl = [[QLPreviewController alloc] init];
         previewCtrl.delegate = self;
         previewCtrl.dataSource = self;
-          
+
         [previewCtrl.navigationItem setRightBarButtonItem:nil];
-          
+
         [self.viewController presentViewController:previewCtrl animated:YES completion:nil];
 
         NSLog(@"cordova.disusered.open - Success!");
@@ -117,4 +117,3 @@
 }
 
 @end
-
