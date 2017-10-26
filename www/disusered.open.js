@@ -17,9 +17,6 @@ var exec = require('cordova/exec');
  * @returns {void}
  */
 exports.open = function (success, error, fileName, fileId) {
-  if (!uri || arguments.length === 0) {
-    return false;
-  }
   exec(onSuccess.bind(this, uri, success), onError.bind(this, error), 'Open', 'open', [fileName, fileId]);
 };
 
