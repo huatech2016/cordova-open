@@ -26,22 +26,38 @@ import java.util.Locale;
 public class Open extends CordovaPlugin {
 
     public static final String OPEN_ACTION = "open";
+    public static final String FILE_EXIST_ACTION = "isFileExist";
+
     private static final int OPEN_FILE_REQUEST = 1;
     private CallbackContext callbackContext;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         this.callbackContext = callbackContext;
-
+        String fileName = args.getString(0);
+        String fileId = args.getString(1);
         if (action.equals(OPEN_ACTION)) {
-            String fileName = args.getString(0);
-            String fileId = args.getString(1);
             this.tryToOpenFile(fileId, fileName);
+            return true;
+        }else if(action.equals(FILE_EXIST_ACTION))
+        {
+            isFileExist(fileId,fileName);
             return true;
         }
         return false;
     }
+  private void isFileExist(String fileId, String fileName )
+    {
+            String fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String realPath = cordova.getActivity().getExternalFilesDir("")  + File.separator + fileId +"."+ fileSuffix;
 
+            File f = new File(realPath);
+            if (f.exists()) {
+                 callbackContext.success();//文件存在
+            }else{
+                 callbackContext.error(0);//文件不存在
+            }
+    },
     /**
      * Returns the MIME type of the file.
      *

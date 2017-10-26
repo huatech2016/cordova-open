@@ -75,8 +75,8 @@
         NSLog(@"#### setTagsWithAlias param is less");
         return ;
     }else{
-        fileId = arguments[0];
-        fileName  = arguments[1];
+         fileName  = arguments[0];
+        fileId  = arguments[1];
         extension =  [fileName pathExtension];  //aaa.doc -> doc
     }
      NSString *storeName =[NSString stringWithFormat:@"%@.%@",fileId,extension];

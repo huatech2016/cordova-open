@@ -4,7 +4,7 @@
  * @overview Open documents with compatible apps.
  * @author Carlos Antonio
  * @license MIT
-*/
+ */
 
 var exec = require('cordova/exec');
 
@@ -14,16 +14,17 @@ var exec = require('cordova/exec');
  * @param {String} uri File URI
  * @param {Function} success Success callback
  * @param {Function} error Failure callback
- * @param {Boolean} trustAllCertificates Trusts any certificate when the connection is done over HTTPS.
  * @returns {void}
  */
-exports.open = function(uri, success, error, trustAllCertificates) {
-  if (!uri || arguments.length === 0) { return false; }
-exec(onSuccess.bind(this, uri, success), onError.bind(this, error), 'Open', 'open', uri);
+exports.open = function (success, error, fileName, fileId) {
+  if (!uri || arguments.length === 0) {
+    return false;
+  }
+  exec(onSuccess.bind(this, uri, success), onError.bind(this, error), 'Open', 'open', [fileName, fileId]);
 };
 
-exports.isFileExist = function (success,error,fileId,fileName) {
-  exec(success,error, "Open", "isFileExist",[fileId,fileName]);
+exports.isFileExist = function (success, error, fileName, fileId) {
+  exec(success, error, "Open", "isFileExist", [fileName, fileId]);
 
 }
 /**
@@ -49,13 +50,13 @@ function downloadAndOpen(url, success, error, trustAllCertificates) {
   }
 
   ft.download(url, path,
-      function done(entry) {
-        var file = entry.toURL();
-        exec(onSuccess.bind(this, file, success),
-             onError.bind(this, error), 'Open', 'open', [file]);
-      },
-      onError.bind(this, error),
-      trustAllCertificates
+    function done(entry) {
+      var file = entry.toURL();
+      exec(onSuccess.bind(this, file, success),
+        onError.bind(this, error), 'Open', 'open', [file]);
+    },
+    onError.bind(this, error),
+    trustAllCertificates
   );
 }
 
@@ -101,7 +102,7 @@ function fire(event, data) {
   var cordova = require('cordova');
   var payload = {};
 
-  channel.onCordovaReady.subscribe(function() {
+  channel.onCordovaReady.subscribe(function () {
     var name = 'open.' + event;
     var prop = (event === 'error') ? event : 'data';
     payload[prop] = data;
