@@ -57,7 +57,7 @@ public class Open extends CordovaPlugin {
             }else{
                  callbackContext.error(0);//文件不存在
             }
-    },
+    }
     /**
      * Returns the MIME type of the file.
      *
