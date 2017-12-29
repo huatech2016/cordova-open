@@ -17,7 +17,7 @@ var exec = require('cordova/exec');
  * @returns {void}
  */
 exports.open = function (success, error, fileName, fileId) {
-  exec(onSuccess.bind(this, success), onError.bind(this, error), 'Open', 'open', [fileName, fileId]);
+  exec(success,error, 'Open', 'open', [fileName, fileId]);
 };
 
 exports.isFileExist = function (success, error, fileName, fileId) {
