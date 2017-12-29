@@ -133,7 +133,7 @@ public class Open extends CordovaPlugin {
         try {
             cordova.getActivity().startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            callbackContext.error("打开文件失败，请先安装wps office");
+            callbackContext.error("未检测到可以打开此文件的应用，请先安装wps");
             e.printStackTrace();
             return false;
         }
@@ -169,7 +169,7 @@ public class Open extends CordovaPlugin {
                 callbackContext.error("文件不存在");
             } catch (ActivityNotFoundException e) {
                 e.printStackTrace();
-                callbackContext.error("程序未检测到可以打开此文件的应用");
+                callbackContext.error("未检测到可以打开此文件的应用");
             }
         }
     }
