@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Locale;
 
+import javax.lang.model.util.ElementScanner6;
+
 /**
  * This class starts an activity for an intent to view files
  */
@@ -39,25 +41,25 @@ public class Open extends CordovaPlugin {
         if (action.equals(OPEN_ACTION)) {
             this.tryToOpenFile(fileId, fileName);
             return true;
-        }else if(action.equals(FILE_EXIST_ACTION))
-        {
-            isFileExist(fileId,fileName);
+        } else if (action.equals(FILE_EXIST_ACTION)) {
+            isFileExist(fileId, fileName);
             return true;
         }
         return false;
     }
-  private void isFileExist(String fileId, String fileName )
-    {
-            String fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-            String realPath = cordova.getActivity().getExternalFilesDir("")  + File.separator + fileId +"."+ fileSuffix;
 
-            File f = new File(realPath);
-            if (f.exists()) {
-                 callbackContext.success();//文件存在
-            }else{
-                 callbackContext.error(0);//文件不存在
-            }
+    private void isFileExist(String fileId, String fileName) {
+        String fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String realPath = cordova.getActivity().getExternalFilesDir("") + File.separator + fileId + "." + fileSuffix;
+
+        File f = new File(realPath);
+        if (f.exists()) {
+            callbackContext.success();// 文件存在
+        } else {
+            callbackContext.error(0);// 文件不存在
+        }
     }
+
     /**
      * Returns the MIME type of the file.
      *
@@ -95,9 +97,9 @@ public class Open extends CordovaPlugin {
             boolean isDoc = path.endsWith("doc") || path.endsWith("docx");
             boolean isExcel = path.endsWith("xls") || path.endsWith("xlsx");
             boolean isPpt = path.endsWith("ppt") || path.endsWith("pptx");
-            boolean isPdf = path.endsWith("pdf") ;
+            boolean isPdf = path.endsWith("pdf");
 
-            if (isDoc || isExcel || isPpt||isPdf) {
+            if (isDoc || isExcel || isPpt || isPdf) {
                 return true;
             } else {
                 return false;
@@ -143,9 +145,8 @@ public class Open extends CordovaPlugin {
     private void openNotWpsFile(String fileId, String fileName) {
         if (fileId != null && fileId.length() > 0) {
             try {
-                String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+                String suffix = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
                 String realPath = cordova.getActivity().getExternalFilesDir("") + File.separator + fileId + "." + suffix;
-               // String realPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "huatechTemp" + File.separator + fileId;
                 File f = new File(realPath);
                 if (!f.exists()) {
                     throw new FileNotFoundException();
@@ -153,17 +154,35 @@ public class Open extends CordovaPlugin {
 
                 //  Uri uri = Uri.parse(realPath);
                 Uri uri = Uri.fromFile(new File(realPath));
-                String mime = getMimeType(fileName);
-                Intent fileIntent = new Intent(Intent.ACTION_VIEW);
-                fileIntent.addCategory("android.intent.category.DEFAULT");
-                fileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (Build.VERSION.SDK_INT > 15) {
-                    fileIntent.setDataAndTypeAndNormalize(uri, mime); // API Level 16 -> Android 4.1
-                } else {
-                    fileIntent.setDataAndType(uri, mime);
+
+               
+                if (suffix != null && suffix.indexOf("aip") >= 0) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(uri,"application/aip");
+                    cordova.getActivity().startActivity(intent);
+                    callbackContext.success();
                 }
-                cordova.getActivity().startActivity(fileIntent);
-                callbackContext.success();
+                else if (suffix != null && suffix.indexOf("ofd") >= 0) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(uri,"application/ofd");
+                    cordova.getActivity().startActivity(intent);
+                    callbackContext.success();
+                }
+                else{
+                    String mime = getMimeType(fileName);
+                    Intent fileIntent = new Intent(Intent.ACTION_VIEW);
+                    fileIntent.addCategory("android.intent.category.DEFAULT");
+                    fileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    if (Build.VERSION.SDK_INT > 15) {
+                        fileIntent.setDataAndTypeAndNormalize(uri, mime); // API Level 16 ->Android 4.1
+                    } else {
+                        fileIntent.setDataAndType(uri, mime);
+                    }
+                    cordova.getActivity().startActivity(fileIntent);
+                    callbackContext.success();
+                }
+               
+               
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 callbackContext.error("文件不存在");
@@ -173,14 +192,3 @@ public class Open extends CordovaPlugin {
             }
         }
     }
-
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//
-//        if (requestCode == OPEN_FILE_REQUEST) {
-//
-//            callbackContext.success();
-//        }
-//    }
-}
