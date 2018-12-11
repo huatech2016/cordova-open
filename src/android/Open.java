@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Locale;
 
-import javax.lang.model.util.ElementScanner6;
 
 /**
  * This class starts an activity for an intent to view files
@@ -192,3 +191,4 @@ public class Open extends CordovaPlugin {
             }
         }
     }
+}
