@@ -133,7 +133,7 @@ CDVInvokedUrlCommand* anotherCommand=nil;
                 commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
 
                                                   messageAsString:@"openSuccess"];
-                [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+                //[self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
 
                 
 
