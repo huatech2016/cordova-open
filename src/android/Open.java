@@ -96,7 +96,7 @@ public class Open extends CordovaPlugin {
             boolean isDoc = path.endsWith("doc") || path.endsWith("docx");
             boolean isExcel = path.endsWith("xls") || path.endsWith("xlsx");
             boolean isPpt = path.endsWith("ppt") || path.endsWith("pptx");
-            boolean isPdf = path.endsWith("pdf");
+            boolean isPdf = path.endsWith("pdf") || path.endsWith("txt");
 
             if (isDoc || isExcel || isPpt || isPdf) {
                 return true;
@@ -118,7 +118,7 @@ public class Open extends CordovaPlugin {
         bundle.putString(WpsModel.THIRD_PACKAGE, cordova.getActivity().getPackageName()); // 第三方应用的包名，用于对改应用合法性的验证
         bundle.putBoolean(WpsModel.CLEAR_TRACE, true);// 清除打开记录
         // bundle.putBoolean(CLEAR_FILE, true); //关闭后删除打开文件
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.setAction(android.content.Intent.ACTION_VIEW);
         intent.setClassName(PackageName.NORMAL, ClassName.NORMAL);
 
@@ -171,7 +171,7 @@ public class Open extends CordovaPlugin {
                     String mime = getMimeType(fileName);
                     Intent fileIntent = new Intent(Intent.ACTION_VIEW);
                     fileIntent.addCategory("android.intent.category.DEFAULT");
-                    fileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                     fileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     if (Build.VERSION.SDK_INT > 15) {
                         fileIntent.setDataAndTypeAndNormalize(uri, mime); // API Level 16 ->Android 4.1
                     } else {
