@@ -18,10 +18,13 @@
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver android:name="com.disusered.MyBroadCastReciver">
                 <intent-filter>
-                    <action android:name="com.kingsoft.writer.back.key.down"/>
+                    <action android:name="cn.wps.moffice.file.save"/>
                     <action android:name="cn.wps.moffice.file.close"/>
                     <action android:name="com.kingsoft.writer.back.key.down"/>
                     <action android:name="com.kingsoft.writer.home.key.down"/>
+
+
+
                 </intent-filter>
             </receiver>
         </config-file>
@@ -30,6 +33,7 @@
         <source-file src="src/android/Open.java" target-dir="src/com/disusered"/>
         <source-file src="src/android/WpsModel.java" target-dir="src/com/disusered"/>
         <source-file src="src/android/MyBroadCastReciver.java" target-dir="src/com/disusered"/>
+        <source-file src="src/android/DownloadCompleteReceiver.java" target-dir="src/com/disusered"/>
 
     </platform>
     <platform name="ios">

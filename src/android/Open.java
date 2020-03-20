@@ -1,10 +1,15 @@
 package com.disusered;
 
+import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.MimeTypeMap;
 
 import com.disusered.WpsModel.ClassName;
@@ -43,10 +48,50 @@ public class Open extends CordovaPlugin {
         } else if (action.equals(FILE_EXIST_ACTION)) {
             isFileExist(fileId, fileName);
             return true;
+        }else if (action.equals("fileSign")) {
+	        this.downloadOaFile(args.getString(0),args.getString(1));
+            return true;
+        }
         }
         return false;
     }
 
+	private void downloadOaFile(String downloadUrl,String fileName){
+
+    	//下载前必须先清空files目录 否则存在同名文件话，downloader 会重命名文件
+
+		this.deleteFile();
+		//发送下载开始广播
+		final Intent downloadIntent = new Intent("startDownloadFile");
+        LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcastSync(downloadIntent);
+
+
+		CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(cordova.getActivity());
+		cookieSyncManager.sync();
+		CookieManager cookieManager = CookieManager.getInstance();
+		String cookie = cookieManager.getCookie(downloadUrl);
+
+		DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
+
+		request.addRequestHeader("Cookie", cookie);
+
+		request.allowScanningByMediaScanner();
+
+		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+
+		request.setAllowedOverMetered(true);
+
+		request.setVisibleInDownloadsUi(false);
+
+		request.setAllowedOverRoaming(true);
+
+		request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+
+		request.setDestinationInExternalFilesDir(cordova.getActivity(), "", fileName);
+		final DownloadManager downloadManager = (DownloadManager) cordova.getActivity().getSystemService(cordova.getActivity().DOWNLOAD_SERVICE);
+
+		downloadManager.enqueue(request);
+	}
     private void isFileExist(String fileId, String fileName) {
         String fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
         String realPath = cordova.getActivity().getExternalFilesDir("") + File.separator + fileId + "." + fileSuffix;
@@ -114,8 +159,8 @@ public class Open extends CordovaPlugin {
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putString(WpsModel.OPEN_MODE, OpenMode.NORMAL); // 打开模式
-        bundle.putBoolean(WpsModel.SEND_CLOSE_BROAD, true); // 关闭时是否发送广播
-        bundle.putString(WpsModel.THIRD_PACKAGE, cordova.getActivity().getPackageName()); // 第三方应用的包名，用于对改应用合法性的验证
+        //bundle.putBoolean(WpsModel.BACKKEY_DOWN, true); //
+        bundle.putString(WpsModel.THIRD_PACKAGE, cordova.getActivity().getPackageName()+"eip"); // 第三方应用的包名，用于对改应用合法性的验证
         bundle.putBoolean(WpsModel.CLEAR_TRACE, true);// 清除打开记录
         // bundle.putBoolean(CLEAR_FILE, true); //关闭后删除打开文件
          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);

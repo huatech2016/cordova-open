@@ -24,6 +24,11 @@ exports.isFileExist = function (success, error, fileName, fileId) {
   exec(success, error, "Open", "isFileExist", [fileName, fileId]);
 
 }
+
+exports.fileSign = function (downloadUrl,fileName) {
+	exec(null, null, "Open", "fileSign", [downloadUrl,fileName]);
+}
+
 /**
  * downloadAndOpen
  *
