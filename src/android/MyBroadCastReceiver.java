@@ -1,57 +1,48 @@
 package com.disusered;
 
 
-import android.app.ActivityManager;
-import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.disusered.WpsModel.Reciver;
 
-import org.bsc.cordova.CDVBroadcaster;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-
-public class MyBroadCastReciver extends BroadcastReceiver {
+public class MyBroadCastReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		String packageName = "PACKAGE-NAME-TO-REPLACE";
 
-//		FileUtils.setAppendFile("intent.getAction():" + intent.getAction());
-//		FileUtils.setAppendFile("ThirdPackage:" + intent.getStringExtra("ThirdPackage"));
-//		FileUtils.setAppendFile("ThirdPartyPackage:" + intent.getStringExtra("ThirdPartyPackage"));
-//		FileUtils.setAppendFile("CurrentPath:" + intent.getStringExtra("CurrentPath"));
-//		FileUtils.setAppendFile("SaveAs:" + intent.getStringExtra("SaveAs"));
-
-
-		if (intent.getExtras().getString(WpsModel.THIRD_PACKAGE).equals("huatech.gov.renda")) {
+		if (intent.getExtras().getString(WpsModel.THIRD_PACKAGE).equals(packageName + "-FILESIGN")) {
 			String s = intent.getAction();
-//			if (s.equals(Reciver.ACTION_BACK_PRO)) {
-//				redirectMyApp(context, intent);
-//
-//			} else if (s.equals(Reciver.ACTION_CLOSE)) {
-//				redirectOnly(context, intent);//E人有本可以正常返回，此处不需要，其它机型有返回不了的情况
-//			} else if (s.equals(Reciver.ACTION_HOME_PRO)) {
-//
-//			} else
-
-			if (s.equals(Reciver.ACTION_SAVE_PRO)) {
-				redirectMyApp(context, intent);
+			if (s.equals(Reciver.ACTION_BACK)) {
+				resumeAppOnly(context);
+			} else if (s.equals(Reciver.ACTION_CLOSE)) {
+				resumeApp(context, intent);
+			} else if (s.equals(Reciver.ACTION_SAVE)) {
+				resumeApp(context, intent);
 			}
+		} else if (intent.getExtras().getString(WpsModel.THIRD_PACKAGE).equals(packageName + "-EIP")) {
+			resumeAppOnly(context);
 		}
+
 	}
 
 
-	private void redirectMyApp(Context context, Intent intent) {
+	/*eip 业务如 通知、会议使用wps打开后返回，什么都不做*/
+	private void resumeAppOnly(Context context) {
+		PackageManager packageManager = context.getPackageManager();
+		Intent newIntent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+		context.getApplicationContext().startActivity(newIntent);
+	}
+
+	/*
+	公文签批，打开返回后可能需要上传文件
+	 */
+	private void resumeApp(Context context, Intent intent) {
 //      个人版逻辑
 //		String str = intent.getExtras().getString("CloseFile");
 //		int downloadId = Integer.parseInt(str.substring(str.lastIndexOf("/") + 1));
@@ -100,7 +91,6 @@ public class MyBroadCastReciver extends BroadcastReceiver {
 		Intent newIntent = packageManager.getLaunchIntentForPackage(context.getPackageName());
 		context.getApplicationContext().startActivity(newIntent);
 	}
-
 
 
 }

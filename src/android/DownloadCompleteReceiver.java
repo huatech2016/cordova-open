@@ -61,7 +61,7 @@ public class DownloadCompleteReceiver extends BroadcastReceiver {
 					bundle.putBoolean(WpsModel.SEND_SAVE_BROAD, true);
 					bundle.putBoolean(WpsModel.HOMEKEY_DOWN, true);
 					bundle.putBoolean(WpsModel.BACKKEY_DOWN, true);
-					bundle.putString(WpsModel.THIRD_PACKAGE, context.getPackageName()+'oa');
+					bundle.putString(WpsModel.THIRD_PACKAGE, context.getPackageName()+"-FILESIGN");
 					bundle.putBoolean(WpsModel.CLEAR_TRACE, true);// 清除打开记录
 
 					bundle.putBoolean("IsShowView", false);// 是否显示wps界面
@@ -77,7 +77,7 @@ public class DownloadCompleteReceiver extends BroadcastReceiver {
 							Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
 					handleIntent.setAction(Intent.ACTION_VIEW);
-					handleIntent.setClassName(WpsModel.PackageName.PACKAGENAME, WpsModel.ClassName.NORMAL);
+					handleIntent.setClassName(WpsModel.PackageName.NORMAL, WpsModel.ClassName.NORMAL);
 
 					handleIntent.putExtras(bundle);
 					try {

@@ -26,6 +26,7 @@ public class WpsModel {
 		public static final String READ_MODE = "ReadMode";// 打开直接进入阅读器模式
 															// 仅Word、TXT文档支持
 		public static final String SAVE_ONLY = "SaveOnly";// 保存模式(打开文件,另存,关闭)
+		public static final String EDIT_MODE = "EditMode";// 保存模式(打开文件,另存,关闭)
 															// 仅Word、TXT文档支持
 	}
 
