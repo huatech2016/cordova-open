@@ -44,6 +44,7 @@
         <source-file src="src/android/WpsModel.java" target-dir="src/com/disusered"/>
         <source-file src="src/android/MyBroadCastReceiver.java" target-dir="src/com/disusered"/>
         <source-file src="src/android/DownloadCompleteReceiver.java" target-dir="src/com/disusered"/>
+        <source-file src="src/android/DownloadStatusQueryReciver.java" target-dir="src/com/disusered"/>
 
     </platform>
     <platform name="ios">
