@@ -5,13 +5,8 @@ import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
-
-import com.disusered.WpsModel.Reciver;
 
 public class DownloadStatusQueryReciver extends BroadcastReceiver {
 	private DownloadManager downloadManager;
@@ -27,7 +22,7 @@ public class DownloadStatusQueryReciver extends BroadcastReceiver {
 
 		if (orderType.equals("order-query")) {
 			downloadManager = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
-			queryStatus(downloadId, downloadManager);
+			queryStatus(downloadId, downloadManager, context);
 
 		} else if (orderType.equals("order-remove")) {
 			downloadManager.remove(downloadId);
@@ -37,7 +32,7 @@ public class DownloadStatusQueryReciver extends BroadcastReceiver {
 	}
 
 
-	private void queryStatus(long id, DownloadManager downloadManager) {
+	private void queryStatus(long id, DownloadManager downloadManager, Context context) {
 
 		boolean isNeedDownloadAgain = true;
 
@@ -83,6 +78,9 @@ public class DownloadStatusQueryReciver extends BroadcastReceiver {
 					}
 					isNeedDownloadAgain = true;
 
+					final Intent endIntent = new Intent("endDownloadFile");
+					endIntent.putExtra("reason", "下载出错，请重试");
+					LocalBroadcastManager.getInstance(context).sendBroadcastSync(endIntent);
 //					AlertUtil.alert("开始重新下载更新!", mContext);
 					break;
 				case DownloadManager.STATUS_PAUSED:

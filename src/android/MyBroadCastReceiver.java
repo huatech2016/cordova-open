@@ -21,7 +21,7 @@ public class MyBroadCastReceiver extends BroadcastReceiver {
 			if (s.equals(Reciver.ACTION_BACK)) {
 				resumeAppOnly(context);
 			} else if (s.equals(Reciver.ACTION_CLOSE)) {
-				resumeApp(context, intent);
+				resumeAppOnly(context);
 			} else if (s.equals(Reciver.ACTION_SAVE)) {
 				resumeApp(context, intent);
 			}

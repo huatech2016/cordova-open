@@ -30,7 +30,7 @@ import java.util.Locale;
  * This class starts an activity for an intent to view files
  */
 public class Open extends CordovaPlugin {
-
+	public static boolean ENABLE_EDIT = false;
 	public static final String OPEN_ACTION = "open";
 	public static final String FILE_EXIST_ACTION = "isFileExist";
 
@@ -50,6 +50,7 @@ public class Open extends CordovaPlugin {
 			isFileExist(fileId, fileName);
 			return true;
 		} else if (action.equals("fileSign")) {
+			ENABLE_EDIT = args.getBoolean(2);
 			this.downloadOaFile(args.getString(0), args.getString(1));
 			return true;
 		}
@@ -110,8 +111,6 @@ public class Open extends CordovaPlugin {
 		final Intent downloadIntent = new Intent("startDownloadFile");
 		downloadIntent.putExtra("downloadId", downloadId);
 		LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcastSync(downloadIntent);
-
-
 		LocalBroadcastManager.getInstance(cordova.getActivity()).registerReceiver(statusQueryReciver, new IntentFilter("receiveOrdersFromJs"));
 	}
 
