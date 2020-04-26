@@ -190,6 +190,9 @@ public class Open extends CordovaPlugin {
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();
 		bundle.putString(WpsModel.OPEN_MODE, OpenMode.READ_ONLY); // 打开模式
+		bundle.putBoolean(WpsModel.SEND_CLOSE_BROAD, true); // 关闭时是否发送广播
+        bundle.putBoolean(WpsModel.BACKKEY_DOWN, true);
+
 		//bundle.putBoolean(WpsModel.BACKKEY_DOWN, true); //
 		bundle.putString(WpsModel.THIRD_PACKAGE, cordova.getActivity().getPackageName() + "-EIP"); // 第三方应用的包名，用于对改应用合法性的验证
 		bundle.putBoolean(WpsModel.CLEAR_TRACE, true);// 清除打开记录
