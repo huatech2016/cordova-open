@@ -20,24 +20,7 @@
         </config-file>
 
 
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:name="com.disusered.MyBroadCastReceiver">
-                <intent-filter>
-                    <action android:name="cn.wps.moffice.file.save"/>
-                    <action android:name="cn.wps.moffice.file.close"/>
-                    <action android:name="com.kingsoft.writer.back.key.down"/>
-                </intent-filter>
-            </receiver>
 
-            <receiver android:name="com.disusered.DownloadCompleteReceiver">
-                <intent-filter>
-                    <action android:name="DownloadManager.ACTION_DOWNLOAD_COMPLETE"/>
-                    <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
-                    <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED"/>
-                </intent-filter>
-            </receiver>
-
-        </config-file>
 
         <config-file parent="/*" target="AndroidManifest.xml"/>
         <source-file src="src/android/Open.java" target-dir="src/com/disusered"/>
