@@ -1,12 +1,18 @@
 package com.disusered;
 
 
+import android.app.ActivityManager;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.support.v4.content.LocalBroadcastManager;
+
+import java.util.List;
+
+import app.App;
 
 public class DownloadStatusQueryReciver extends BroadcastReceiver {
 	private DownloadManager downloadManager;
@@ -26,9 +32,24 @@ public class DownloadStatusQueryReciver extends BroadcastReceiver {
 
 		} else if (orderType.equals("order-remove")) {
 			downloadManager.remove(downloadId);
+		}else if(orderType.equals("fileSign-success"))
+		{
+
+			moveAppToFront(context);
 		}
 
 
+	}
+
+
+	private void moveAppToFront(Context context) {
+		ActivityManager activityManager = (ActivityManager) (context.getSystemService(Context.ACTIVITY_SERVICE));
+		List<ActivityManager.RunningTaskInfo> taskList = activityManager.getRunningTasks(100);
+		for (ActivityManager.RunningTaskInfo runningTaskInfo : taskList){
+			if (runningTaskInfo.topActivity.getPackageName().equals(context.getPackageName())){
+				activityManager.moveTaskToFront(runningTaskInfo.id, 0);
+			}
+		}
 	}
 
 
